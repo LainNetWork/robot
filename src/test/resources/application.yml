@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: test
+  cache:
+    cache-names: imageIdCache,tokenCache
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=86400s
+
+bot:
+  account:
+  password:
+  masterAccount:
+  
+blog:
+  uploadUrl:
+  loginUrl:
+  username:
+  password:
+
+acg:
+  imageApiUrl:
+  imageApiKey:

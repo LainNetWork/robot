@@ -1,0 +1,29 @@
+spring:
+  profiles:
+    active: dev
+  cache:
+    cache-names: imageIdCache,authCache
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=86000s
+
+bot:
+  account:
+  password:
+  masterAccount:
+
+blog:
+  uploadUrl:
+  loginUrl:
+  username:
+  password:
+
+acg:
+  imageApiUrl: https://api.lolicon.app/setu/?apikey={apikey}&keyword={keyword}&r18={r18}&size1200={size1200}
+  imageApiKey:
+
+xinjie:
+  masterId:
+  email:
+  serviceGroup:
+  password:
+  baseURL: http://www.xinjiecloud.vip
