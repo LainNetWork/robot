@@ -1,23 +1,18 @@
 package fun.lain.robot.handler;
 
-import com.alibaba.fastjson.JSONObject;
 import fun.lain.robot.cache.AuthCache;
 import fun.lain.robot.config.properties.XinJieProperties;
 import fun.lain.robot.constants.ApiConstants;
 import fun.lain.robot.constants.TokenEnum;
-import fun.lain.robot.service.RobotService;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.MessageEvent;
-import org.apache.commons.collections.CollectionUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,11 +22,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -127,9 +120,9 @@ public class XinJieHandler implements  MessageHandler{
         xinjieCookies.forEach(e->httpHeaders.add(HttpHeaders.COOKIE,e));
         httpHeaders.add(HttpHeaders.REFERER,xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
-        ResponseEntity<JSONObject> exchange = restTemplate.exchange(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_CHECKIN, HttpMethod.POST, httpEntity, JSONObject.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_CHECKIN, HttpMethod.POST, httpEntity, String.class);
         xinJieProperties.getServiceGroup().forEach(e->{
-            getBotService().getBot().getGroup(e).sendMessage(exchange.getBody().toString());
+            getBotService().getBot().getGroup(e).sendMessage(String.valueOf(exchange.getBody()));
         });
     }
 

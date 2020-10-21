@@ -11,6 +11,10 @@ bot:
   password:
   masterAccount:
 
+logging:
+  file:
+    path: ./log
+
 blog:
   uploadUrl:
   loginUrl:
