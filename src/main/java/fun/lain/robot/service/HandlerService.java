@@ -1,6 +1,7 @@
 package fun.lain.robot.service;
 
 import fun.lain.robot.handler.MessageHandler;
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.message.MessageEvent;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Author Lain <tianshang360@163.com>
  * @Date 2020/10/17 0:58
  */
+@Slf4j
 public class HandlerService {
     private final ConcurrentHashMap<String,MessageHandler> HANDLERS = new ConcurrentHashMap<>();
 
@@ -25,7 +27,7 @@ public class HandlerService {
             try {
                 e.handleMsg(messageEvent);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                log.error("命令执行失败",ex);
                 messageEvent.getSubject().sendMessage("处理失败了喵...");
             }
         });

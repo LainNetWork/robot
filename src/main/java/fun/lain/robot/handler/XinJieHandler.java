@@ -72,32 +72,41 @@ public class XinJieHandler implements  MessageHandler{
                 subject.sendMessage(stringBuilder.toString());
                 break;
             }
+            case "sub":{
+                subject.sendMessage("↓重置成功啦！请通过Base64解码获取最新订阅↓");
+                subject.sendMessage(getSubInfo(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER));
+                subject.sendMessage("👆Base64在线解密https://base64.us/");
+                break;
+            }
             case "reset" : {
                 if(!xinJieProperties.getMasterId().contains(contact.getSender().getId())){
                     subject.sendMessage("只有主人才可以重置伦家哦QAQ");
                     break;
                 }
-                List<String> xinjieCookies = authCache.getXinjieCookies(TokenEnum.XIN_JIE_CLOUD.name());
-                HttpHeaders httpHeaders = new HttpHeaders();
-                xinjieCookies.forEach(e->httpHeaders.add(HttpHeaders.COOKIE,e));
-                HttpEntity httpEntity = new HttpEntity(httpHeaders);
-                ResponseEntity<String> result = restTemplate.exchange(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_RESET,HttpMethod.GET,httpEntity, String.class);
-                String body = result.getBody();
-                Document document = Jsoup.parse(body);
-                Map<String, String> ssrLinks = getSubscribeLink(document, ".quickadd #all_ssr");
-                Map<String, String> v2rayLinks = getSubscribeLink(document, ".quickadd #all_v2ray");
-
-                StringBuilder stringBuilder = new StringBuilder("重置成功喵~\n");
-                stringBuilder.append("酸酸乳订阅，每日新鲜送到家！：\n");
-                ssrLinks.forEach((k,v)->stringBuilder.append(k).append(" ").append(v).append("\n"));
-                stringBuilder.append("威图Ray，专属定制手机，尊享品质人生：");
-                v2rayLinks.forEach((k,v)->stringBuilder.append(k).append(" ").append(v).append("\n"));
-                String s = Base64Utils.encodeToString(stringBuilder.toString().getBytes());
                 subject.sendMessage("↓重置成功啦！请通过Base64解码获取最新订阅↓");
-                subject.sendMessage(s);
+                subject.sendMessage(getSubInfo(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_RESET));
                 subject.sendMessage("👆Base64在线解密https://base64.us/");
+                break;
             }
         }
+    }
+
+    private String getSubInfo(String url){
+        List<String> xinjieCookies = authCache.getXinjieCookies(TokenEnum.XIN_JIE_CLOUD.name());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        xinjieCookies.forEach(e->httpHeaders.add(HttpHeaders.COOKIE,e));
+        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        ResponseEntity<String> result = restTemplate.exchange(url,HttpMethod.GET,httpEntity, String.class);
+        String body = result.getBody();
+        Document document = Jsoup.parse(body);
+        Map<String, String> ssrLinks = getSubscribeLink(document, ".quickadd #all_ssr");
+        Map<String, String> v2rayLinks = getSubscribeLink(document, ".quickadd #all_v2ray");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("酸酸乳订阅，每日新鲜送到家！：\n");
+        ssrLinks.forEach((k,v)->stringBuilder.append(k).append(" ").append(v).append("\n"));
+        stringBuilder.append("威图Ray，专属定制手机，尊享品质人生：");
+        v2rayLinks.forEach((k,v)->stringBuilder.append(k).append(" ").append(v).append("\n"));
+        return Base64Utils.encodeToString(stringBuilder.toString().getBytes());
     }
 
     private Map<String,String> getSubscribeLink(Document document,String selector){
