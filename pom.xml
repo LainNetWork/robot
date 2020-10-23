@@ -85,6 +85,18 @@
             <version>1.2.73</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sksamuel.scrimage</groupId>
+            <artifactId>scrimage-filters</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sksamuel.scrimage</groupId>
+            <artifactId>scrimage-core</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>

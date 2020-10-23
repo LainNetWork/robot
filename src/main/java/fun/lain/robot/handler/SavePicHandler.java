@@ -69,7 +69,6 @@ public class SavePicHandler implements MessageHandler {
             }
             for (String imageId : imageIds) {
                 Image offlineImage = MessageUtils.newImage(imageId);
-                subject.sendMessage("转存中，请稍侯");
                 if(contact instanceof GroupMessageEvent){
                     String s = contact.getBot().queryImageUrl(offlineImage);
                     log.info("qq url:{}",s);

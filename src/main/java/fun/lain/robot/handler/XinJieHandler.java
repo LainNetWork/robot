@@ -1,5 +1,6 @@
 package fun.lain.robot.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import fun.lain.robot.cache.AuthCache;
 import fun.lain.robot.config.properties.XinJieProperties;
 import fun.lain.robot.constants.ApiConstants;
@@ -130,8 +131,10 @@ public class XinJieHandler implements  MessageHandler{
         httpHeaders.add(HttpHeaders.REFERER,xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
         ResponseEntity<String> exchange = restTemplate.exchange(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_CHECKIN, HttpMethod.POST, httpEntity, String.class);
+        String resp = exchange.getBody();
+        JSONObject jsonObject = JSONObject.parseObject(resp);
         xinJieProperties.getServiceGroup().forEach(e->{
-            getBotService().getBot().getGroup(e).sendMessage(String.valueOf(exchange.getBody()));
+            getBotService().getBot().getGroup(e).sendMessage(jsonObject.toJSONString());
         });
     }
 

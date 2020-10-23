@@ -1,5 +1,8 @@
 package fun.lain.robot.utils;
 
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.filter.GrayscaleFilter;
+import com.sksamuel.scrimage.nio.ImmutableImageLoader;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -27,18 +30,15 @@ public class EmojiUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        MS_FONT = fonts[0].deriveFont(Font.PLAIN,28);
+        MS_FONT = fonts[0].deriveFont(Font.BOLD,24);
+
     }
 
-
-    public static BufferedImage createEmoji(String context) throws IOException {
-        int i2 = new Random().nextInt(4);
-        BufferedImage image = ImageIO.read(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("emo/emo" + i2 +".jpg")));
+    public static BufferedImage buildEmoji(BufferedImage image,String context,Color background,Color font){
         Graphics2D graphics = image.createGraphics();
-        graphics.setFont(MS_FONT);
-        graphics.setColor(Color.BLACK);
         FontMetrics fontMetrics = graphics.getFontMetrics(MS_FONT);
-        int height = fontMetrics.getHeight();
+        int lineSpace = 2;//字符高度预留行间距
+        int height = fontMetrics.getHeight() + lineSpace;
         List<String> lines = new ArrayList<>();
         StringBuilder temp = new StringBuilder();
         for (char c : context.toCharArray()) {
@@ -51,39 +51,39 @@ public class EmojiUtils {
                 temp.append(a);
             }
         }
-        if(CollectionUtils.isEmpty(lines)){
-            int i = fontMetrics.stringWidth(temp.toString());
-            int i1 = (image.getWidth() - i) / 2;
-            graphics.drawString(temp.toString(),i1,310);
-        }else {
-            if(!StringUtils.isEmpty(temp.toString())){
-                lines.add(temp.toString());
-            }
-            for (int i = 0; i < lines.size(); i++) {
-                if(i == lines.size() -1){
-                    int width = fontMetrics.stringWidth(temp.toString());
-                    int i1 = (image.getWidth() - width) / 2;
-                    graphics.drawString(temp.toString(),i1,310 +  i * height);
-                }else {
-                    graphics.drawString(lines.get(i),10,310 + i * height);
-                }
+        lines.add(temp.toString());
+        //扩容图片长度
+        int newHeight = image.getHeight() + lines.size() * height + lineSpace*3;
+        BufferedImage resizedImage = new BufferedImage(image.getWidth(),newHeight,BufferedImage.TYPE_INT_RGB);
+        Graphics resizedGraphics = resizedImage.getGraphics();
+        resizedGraphics.setFont(MS_FONT);
+        resizedGraphics.setColor(background);
+        resizedGraphics.fillRect(0,0,resizedImage.getWidth(),newHeight);
+        resizedGraphics.drawImage(image,0,0,image.getWidth(),image.getHeight(),null);
+        resizedGraphics.setColor(font);
+        for (int i = 0; i < lines.size(); i++) {
+            if(i == lines.size() -1){
+                int width = fontMetrics.stringWidth(temp.toString());
+                int i1 = (resizedImage.getWidth() - width) / 2;
+                resizedGraphics.drawString(temp.toString(),i1,image.getHeight() +  (i + 1) * height - lineSpace);
+            }else {
+                resizedGraphics.drawString(lines.get(i),0,image.getHeight() + (i + 1) * height - lineSpace);
             }
         }
+        return resizedImage;
+    }
 
+    public static BufferedImage createEmoji(String context) throws IOException {
+        int i2 = new Random().nextInt(4);
+        BufferedImage image = ImageIO.read(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("emo/emo" + i2 +".jpg")));
+        return buildEmoji(image,context,Color.WHITE,Color.BLACK);
+    }
 
-//        if(totalWidth > image.getWidth()){
-//            int rest = totalWidth - image.getWidth();
-//            int i = (int) Math.floor(context.length() * rest / totalWidth);
-//            if ( i > 0 ){
-//                String firstLine = context.substring(0 , context.length() - i);
-//                String substring = context.substring(context.length() - i);
-//                graphics.drawString(firstLine,10,310);
-//                graphics.drawString(substring,10,350);
-//            }
-//        }else {
-//            graphics.drawString(context,10,310);
-//        }
-
-        return image;
+    public static BufferedImage avatarImageEmoji(BufferedImage avatar,String context) throws IOException {
+        ImmutableImage source = ImmutableImage.fromAwt(avatar);
+        BufferedImage image = buildEmoji(source.scaleToWidth(300).toNewBufferedImage(BufferedImage.TYPE_INT_RGB), context,Color.BLACK,Color.WHITE);
+        ImmutableImage immutableImage = ImmutableImage.fromAwt(image);
+        ImmutableImage filter = immutableImage.filter(new GrayscaleFilter());
+        return filter.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
     }
 }
