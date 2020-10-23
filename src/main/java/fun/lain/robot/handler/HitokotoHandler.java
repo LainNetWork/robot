@@ -1,5 +1,6 @@
 package fun.lain.robot.handler;
 
+import fun.lain.robot.service.TranslateService;
 import fun.lain.robot.utils.EmojiUtils;
 import lombok.AllArgsConstructor;
 import net.mamoe.mirai.contact.Contact;
@@ -14,7 +15,9 @@ import org.springframework.web.client.RestTemplate;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Lain <tianshang360@163.com>
@@ -24,7 +27,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class HitokotoHandler implements MessageHandler{
     private final RestTemplate restTemplate;
-
+    private final TranslateService translateService;
     @Override
     public int order() {
         return 0;
@@ -47,6 +50,7 @@ public class HitokotoHandler implements MessageHandler{
         if(first.isPresent()){
             QuoteReply quoteReply = (QuoteReply)first.get();
             String hitokoto = quoteReply.getSource().getOriginalMessage().contentToString();
+            String jp = translateService.baiduTranslate(hitokoto, "auto", "jp");
             long fromId = quoteReply.getSource().getFromId();
             if(subject instanceof Group){
                 Group group = (Group) subject;
@@ -57,8 +61,27 @@ public class HitokotoHandler implements MessageHandler{
                     return;
                 }
                 BufferedImage read = ImageIO.read(new ByteArrayInputStream(image.getBody()));
-                BufferedImage cao = EmojiUtils.avatarImageEmoji(read, hitokoto);
-                Image image1 = subject.uploadImage(cao);
+                BufferedImage cao = EmojiUtils.avatarImageEmoji(read, jp,24);
+                BufferedImage result = EmojiUtils.avatarImageEmoji(cao, hitokoto,15);
+
+                Image image1 = subject.uploadImage(result);
+                subject.sendMessage(image1);
+            }
+        }else {
+            Optional<Image> image = contact.getMessage().stream().filter(e -> e instanceof Image).map(e->(Image)e).findFirst();
+            Optional<SingleMessage> content = contact.getMessage().stream().filter(e -> e instanceof PlainText).findFirst();
+            if(image.isPresent() && content.isPresent()){
+                String contentToString = content.get().contentToString();
+                String jp = translateService.baiduTranslate(contentToString, "auto", "jp");
+                String imageUrl = contact.getBot().queryImageUrl(image.get());
+                ResponseEntity<byte[]> imageData = restTemplate.getForEntity(imageUrl, byte[].class);
+                if(imageData.getBody() == null){
+                    subject.sendMessage("获取图片失败惹，一定是服务器被网线所蒙蔽了！");
+                    return;
+                }
+                BufferedImage cao = EmojiUtils.imageImageEmoji(ImageIO.read(new ByteArrayInputStream(imageData.getBody())), jp,24);
+                BufferedImage result = EmojiUtils.imageImageEmoji(cao, contentToString,15);
+                Image image1 = subject.uploadImage(result);
                 subject.sendMessage(image1);
             }
         }

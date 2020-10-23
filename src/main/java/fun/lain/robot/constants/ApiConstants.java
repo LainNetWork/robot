@@ -9,4 +9,6 @@ public interface ApiConstants {
     String XIN_JIE_CHECKIN = "/user/checkin";
     String XIN_JIE_USER = "/user";
     String XIN_JIE_RESET = "/user/url_reset";
+
+    String BAIDU_TRANSLATE = "https://api.fanyi.baidu.com/api/trans/vip/translate?q={q}&from={from}&to={to}&appid={appid}&salt={salt}&sign={sign}";
 }

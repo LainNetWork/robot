@@ -46,7 +46,7 @@ public class EmojiHandler implements MessageHandler {
         Contact contact = messageEvent.getSubject();
         int index = msg.indexOf(".jpg");
         String content = msg.substring(0, index);
-        Image image = contact.uploadImage(EmojiUtils.createEmoji(content));
+        Image image = contact.uploadImage(EmojiUtils.createEmoji(content,24));
 
         MessageReceipt<Contact> contactMessageReceipt = contact.sendMessage(image);
         int id = contactMessageReceipt.getSource().getId();

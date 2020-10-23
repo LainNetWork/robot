@@ -3,10 +3,14 @@ package fun.lain.robot.handler;
 import fun.lain.robot.service.RobotService;
 import fun.lain.robot.utils.BeanUtils;
 import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.message.data.SingleMessage;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -29,6 +33,15 @@ public interface MessageHandler {
          return "";
       }
       SingleMessage singleMessage = firstText.get();
+      return singleMessage.contentToString();
+   }
+
+   default String getLastPlainTextMsg(MessageEvent messageEvent){
+      List<SingleMessage> collect = messageEvent.getMessage().stream().filter(e -> e instanceof PlainText).collect(Collectors.toList());
+      if(collect.isEmpty()){
+         return "";
+      }
+      SingleMessage singleMessage = collect.get(collect.size() - 1);
       return singleMessage.contentToString();
    }
 
