@@ -8,6 +8,7 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.message.MessageEvent;
 import net.mamoe.mirai.message.data.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,22 +70,26 @@ public class HitokotoHandler implements MessageHandler{
                 subject.sendMessage(image1);
             }
         }else {
-            Optional<Image> image = contact.getMessage().stream().filter(e -> e instanceof Image).map(e->(Image)e).findFirst();
+            List<Image> collect = contact.getMessage().stream().filter(e -> e instanceof Image).map(e -> (Image) e).collect(Collectors.toList());
             Optional<SingleMessage> content = contact.getMessage().stream().filter(e -> e instanceof PlainText).findFirst();
-            if(image.isPresent() && content.isPresent()){
-                String contentToString = content.get().contentToString();
-                String jp = translateService.baiduTranslate(contentToString, "auto", "jp");
-                String imageUrl = contact.getBot().queryImageUrl(image.get());
+            List<BufferedImage> result = new ArrayList<>();
+            String contentToString = content.map(SingleMessage::contentToString).orElse("");
+            String jp = translateService.baiduTranslate(contentToString, "auto", "jp");
+            for (Image image : collect) {
+                String imageUrl = contact.getBot().queryImageUrl(image);
                 ResponseEntity<byte[]> imageData = restTemplate.getForEntity(imageUrl, byte[].class);
                 if(imageData.getBody() == null){
                     subject.sendMessage("获取图片失败惹，一定是服务器被网线所蒙蔽了！");
                     return;
                 }
-                BufferedImage cao = EmojiUtils.imageImageEmoji(ImageIO.read(new ByteArrayInputStream(imageData.getBody())), jp,24);
-                BufferedImage result = EmojiUtils.imageImageEmoji(cao, contentToString,15);
-                Image image1 = subject.uploadImage(result);
-                subject.sendMessage(image1);
+                BufferedImage read = ImageIO.read(new ByteArrayInputStream(imageData.getBody()));
+                result.add(read);
             }
+            BufferedImage source = EmojiUtils.montageImages(result);
+            BufferedImage cao = EmojiUtils.imageImageEmoji(source, jp,24);
+            BufferedImage resultImage = EmojiUtils.imageImageEmoji(cao, contentToString,15);
+            Image image1 = subject.uploadImage(resultImage);
+            subject.sendMessage(image1);
         }
     }
 

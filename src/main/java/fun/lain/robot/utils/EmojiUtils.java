@@ -34,7 +34,7 @@ public class EmojiUtils {
     }
 
     public static BufferedImage buildEmoji(BufferedImage image,String context,Color background,Color fontColor,int fontSize){
-        Font font = MS_FONT.deriveFont(Font.BOLD, fontSize);
+        Font font = autoSuitFont(MS_FONT.deriveFont(Font.BOLD, fontSize),image.getWidth(),context);
         Graphics2D graphics = image.createGraphics();
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
         int lineSpace = 2;//字符高度预留行间距
@@ -53,7 +53,7 @@ public class EmojiUtils {
         }
         lines.add(temp.toString());
         //扩容图片长度
-        int newHeight = image.getHeight() + lines.size() * height + lineSpace*3;
+        int newHeight = image.getHeight() + lines.size() * height + lineSpace*lines.size()*3;
         BufferedImage resizedImage = new BufferedImage(image.getWidth(),newHeight,BufferedImage.TYPE_INT_RGB);
         Graphics resizedGraphics = resizedImage.getGraphics();
         resizedGraphics.setFont(font);
@@ -73,6 +73,15 @@ public class EmojiUtils {
         return resizedImage;
     }
 
+    private static Font autoSuitFont(Font sourceFont,int imageWidth,String context){
+        int size = sourceFont.getSize();
+        if(size * context.length() <= imageWidth){
+            return sourceFont.deriveFont((float)((imageWidth*3/4) / context.length()));//文字较少的时候，占画面3/4
+        }
+        return sourceFont;
+
+    }
+
     public static BufferedImage createEmoji(String context,int fontSize) throws IOException {
         int i2 = new Random().nextInt(4);
         BufferedImage image = ImageIO.read(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("emo/emo" + i2 +".jpg")));
@@ -90,6 +99,12 @@ public class EmojiUtils {
         return filter.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
     }
 
+    public static BufferedImage montageImages(List<BufferedImage> images){
+        Optional<Integer> maxWidth = images.stream().max(Comparator.comparingInt(BufferedImage::getWidth)).map(BufferedImage::getWidth);
+        ImmutableImage source = montageImages(images,maxWidth.orElse(0));
+        return source.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+    }
+
     public static BufferedImage imageImageEmoji(BufferedImage avatar,String context,int fontSize) throws IOException {
         if(context == null){
             context = "";
@@ -99,5 +114,23 @@ public class EmojiUtils {
         ImmutableImage immutableImage = ImmutableImage.fromAwt(image);
         ImmutableImage filter = immutableImage.filter(new GrayscaleFilter());
         return filter.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+    }
+
+
+
+    private static ImmutableImage montageImages(List<BufferedImage> images,int maxWidth){
+        ImmutableImage source = null;
+        for (BufferedImage bufferedImage : images) {
+            ImmutableImage added = ImmutableImage.fromAwt(bufferedImage).scaleToWidth(maxWidth);
+            source = buildImage(source, added);
+        }
+        return source;
+    }
+
+    private static ImmutableImage buildImage(ImmutableImage origin,ImmutableImage added){
+        if(origin == null){
+            return added;
+        }
+        return origin.padBottom(added.height,Color.WHITE).overlay(added,0,origin.height);
     }
 }

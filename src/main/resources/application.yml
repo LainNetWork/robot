@@ -31,3 +31,8 @@ xinjie:
   serviceGroup:
   password:
   baseURL: http://www.xinjiecloud.vip
+
+translate:
+  baidu:
+    appID:
+    secretKey:
