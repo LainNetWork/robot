@@ -68,9 +68,14 @@ public class XinJieHandler implements  MessageHandler{
                     stringBuilder.append(e.text()).append(": ").append(e.nextElementSibling().text()).append("\n");
                 });
                 Elements timeLimit = document.getElementsContainingText("等级到期时间");
-                String text = timeLimit.eachText().get(timeLimit.size()-1);
-                stringBuilder.append(text);
-                subject.sendMessage(stringBuilder.toString());
+                int size = timeLimit.size();
+                if(size > 0){
+                    String text = timeLimit.eachText().get(size -1);
+                    stringBuilder.append(text);
+                    subject.sendMessage(stringBuilder.toString());
+                }else{
+                    subject.sendMessage("什么都没获取到呢");
+                }
                 break;
             }
             case "sub":{

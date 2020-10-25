@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
+ * 色图API由 https://api.lolicon.app/#/setu 提供
  * @Author Lain <tianshang360@163.com>
  * @Date 2020/10/17 0:46
  */

@@ -123,8 +123,11 @@ public class SavePicHandler implements MessageHandler {
 
     @Override
     public boolean isMatch(MessageEvent msg) {
-        return  msg.getSender().getId()==robotProperties.getMasterAccount()&&
-                msg.getMessage().stream().filter(e->e instanceof At).anyMatch(e->((At) e).getTarget() == msg.getBot().getId())
+        if(msg.getSender().getId() != robotProperties.getMasterAccount()){
+            msg.getSubject().sendMessage("私密马神，只有主人才能调用我哦~");
+            return false;
+        }
+        return msg.getMessage().stream().filter(e->e instanceof At).anyMatch(e->((At) e).getTarget() == msg.getBot().getId())
                 && msg.getMessage().stream().filter(e->e instanceof PlainText).anyMatch(e->((PlainText) e).getContent().trim().equals("save"));
     }
 }
