@@ -79,7 +79,7 @@ public class EmojiUtils {
     }
 
     public static BufferedImage createEmoji(String context,int fontSize) throws IOException {
-        int i2 = new Random().nextInt(4);
+        int i2 = new Random().nextInt(6);
         BufferedImage image = ImageIO.read(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("emo/emo" + i2 +".jpg")));
         return buildEmoji(image,context,Color.WHITE,Color.BLACK,fontSize);
     }
@@ -89,14 +89,12 @@ public class EmojiUtils {
             context = "";
         }
         BufferedImage image = buildEmoji(source.scaleToWidth(300).toNewBufferedImage(BufferedImage.TYPE_INT_RGB), context,Color.BLACK,Color.WHITE,fontSize);
-        ImmutableImage immutableImage = ImmutableImage.fromAwt(image).filter(new GrayscaleFilter());
-        return immutableImage;
+        return ImmutableImage.fromAwt(image).filter(new GrayscaleFilter());
     }
 
     public static ImmutableImage montageImages(List<BufferedImage> images){
         Optional<Integer> maxWidth = images.stream().max(Comparator.comparingInt(BufferedImage::getWidth)).map(BufferedImage::getWidth);
-        ImmutableImage source = montageImages(images,maxWidth.orElse(0));
-        return source;
+        return montageImages(images,maxWidth.orElse(0));
     }
 
     public static ImmutableImage imageImageEmoji(ImmutableImage source,String context,int fontSize) throws IOException {
@@ -104,8 +102,7 @@ public class EmojiUtils {
             context = "";
         }
         BufferedImage image = buildEmoji(source.toNewBufferedImage(BufferedImage.TYPE_INT_RGB), context,Color.BLACK,Color.WHITE,fontSize);
-        ImmutableImage immutableImage = ImmutableImage.fromAwt(image).filter(new GrayscaleFilter());
-        return immutableImage;
+        return ImmutableImage.fromAwt(image).filter(new GrayscaleFilter());
     }
 
 

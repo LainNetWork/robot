@@ -8,6 +8,7 @@ import fun.lain.robot.constants.TokenEnum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.MessageEvent;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -79,9 +80,15 @@ public class XinJieHandler implements  MessageHandler{
                 break;
             }
             case "sub":{
-                subject.sendMessage("↓请通过Base64解码获取最新订阅↓");
-                subject.sendMessage(getSubInfo(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER));
-                subject.sendMessage("👆Base64在线解密https://base64.us/");
+                if(subject instanceof Group){
+                    subject.sendMessage("这是人家的小秘密，请私聊人家哦~");
+                    return;
+                }
+                if(xinJieProperties.getUserId().contains(contact.getSender().getId())){
+                    subject.sendMessage("↓请通过Base64解码获取最新订阅↓");
+                    subject.sendMessage(getSubInfo(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER));
+                    subject.sendMessage("👆Base64在线解密https://base64.us/");
+                }
                 break;
             }
             case "reset" : {

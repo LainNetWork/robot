@@ -19,4 +19,5 @@ public class XinJieProperties {
     private String baseURL;
     private List<Long> serviceGroup;
     private List<Long> masterId;
+    private List<Long> userId;
 }

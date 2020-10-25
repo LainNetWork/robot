@@ -56,6 +56,10 @@ public class SavePicHandler implements MessageHandler {
 
     @Override
     public void handleMsg(MessageEvent contact) throws Exception {
+        if(contact.getSender().getId() != robotProperties.getMasterAccount()){
+            contact.getSubject().sendMessage("私密马神，只有主人才能调用我哦~");
+            return;
+        }
         contact.getMessage().stream().filter(e->e instanceof QuoteReply).forEach(e->{
             Contact subject = contact.getSubject();
             QuoteReply quoteReply = (QuoteReply)e;
@@ -123,10 +127,6 @@ public class SavePicHandler implements MessageHandler {
 
     @Override
     public boolean isMatch(MessageEvent msg) {
-        if(msg.getSender().getId() != robotProperties.getMasterAccount()){
-            msg.getSubject().sendMessage("私密马神，只有主人才能调用我哦~");
-            return false;
-        }
         return msg.getMessage().stream().filter(e->e instanceof At).anyMatch(e->((At) e).getTarget() == msg.getBot().getId())
                 && msg.getMessage().stream().filter(e->e instanceof PlainText).anyMatch(e->((PlainText) e).getContent().trim().equals("save"));
     }
