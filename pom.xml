@@ -96,6 +96,12 @@
             <artifactId>scrimage-core</artifactId>
             <version>4.0.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.zh79325</groupId>
+            <artifactId>open-gif</artifactId>
+            <version>1.0.4</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

@@ -1,19 +1,22 @@
 package fun.lain.robot.handler;
 
+import com.sksamuel.scrimage.ImmutableImage;
 import fun.lain.robot.service.TranslateService;
 import fun.lain.robot.utils.EmojiUtils;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.message.MessageEvent;
 import net.mamoe.mirai.message.data.*;
-import org.apache.commons.collections.CollectionUtils;
+import net.mamoe.mirai.message.data.Image;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
  * @date 2020/10/23 12:12
  */
 @Component
+@Slf4j
 @AllArgsConstructor
 public class HitokotoHandler implements MessageHandler{
     private final RestTemplate restTemplate;
@@ -63,10 +67,9 @@ public class HitokotoHandler implements MessageHandler{
                     return;
                 }
                 BufferedImage read = ImageIO.read(new ByteArrayInputStream(image.getBody()));
-                BufferedImage cao = EmojiUtils.avatarImageEmoji(read, jp,24);
-                BufferedImage result = EmojiUtils.avatarImageEmoji(cao, hitokoto,15);
-
-                Image image1 = subject.uploadImage(result);
+                ImmutableImage cao = EmojiUtils.avatarImageEmoji(ImmutableImage.fromAwt(read), jp,24);
+                ImmutableImage result = EmojiUtils.avatarImageEmoji(cao, hitokoto,15);
+                Image image1 = subject.uploadImage(result.padBottom(15,Color.BLACK).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
                 subject.sendMessage(image1);
             }
         }else {
@@ -85,10 +88,10 @@ public class HitokotoHandler implements MessageHandler{
                 BufferedImage read = ImageIO.read(new ByteArrayInputStream(imageData.getBody()));
                 result.add(read);
             }
-            BufferedImage source = EmojiUtils.montageImages(result);
-            BufferedImage cao = EmojiUtils.imageImageEmoji(source, jp,24);
-            BufferedImage resultImage = EmojiUtils.imageImageEmoji(cao, contentToString,15);
-            Image image1 = subject.uploadImage(resultImage);
+            ImmutableImage source = EmojiUtils.montageImages(result);
+            ImmutableImage cao = EmojiUtils.imageImageEmoji(source, jp,24);
+            ImmutableImage resultImage = EmojiUtils.imageImageEmoji(cao, contentToString,15);
+            Image image1 = subject.uploadImage(resultImage.padBottom(15, Color.BLACK).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
             subject.sendMessage(image1);
         }
     }

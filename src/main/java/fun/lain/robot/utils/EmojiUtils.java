@@ -2,19 +2,14 @@ package fun.lain.robot.utils;
 
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.filter.GrayscaleFilter;
-import com.sksamuel.scrimage.nio.ImmutableImageLoader;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * 简易地画表情包
@@ -37,8 +32,9 @@ public class EmojiUtils {
         Font font = autoSuitFont(MS_FONT.deriveFont(Font.BOLD, fontSize),image.getWidth(),context);
         Graphics2D graphics = image.createGraphics();
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
-        int lineSpace = 2;//字符高度预留行间距
-        int height = fontMetrics.getHeight() + lineSpace;
+        TextLayout textLayout = new TextLayout(context,font,graphics.getFontRenderContext());
+        int lineSpace = 5;
+        int height = (int) textLayout.getBounds().getHeight() + lineSpace;
         List<String> lines = new ArrayList<>();
         StringBuilder temp = new StringBuilder();
         for (char c : context.toCharArray()) {
@@ -53,7 +49,7 @@ public class EmojiUtils {
         }
         lines.add(temp.toString());
         //扩容图片长度
-        int newHeight = image.getHeight() + lines.size() * height + lineSpace*lines.size()*3;
+        int newHeight = image.getHeight() + lines.size() * height;
         BufferedImage resizedImage = new BufferedImage(image.getWidth(),newHeight,BufferedImage.TYPE_INT_RGB);
         Graphics resizedGraphics = resizedImage.getGraphics();
         resizedGraphics.setFont(font);
@@ -88,32 +84,28 @@ public class EmojiUtils {
         return buildEmoji(image,context,Color.WHITE,Color.BLACK,fontSize);
     }
 
-    public static BufferedImage avatarImageEmoji(BufferedImage avatar,String context,int fontSize) throws IOException {
+    public static ImmutableImage avatarImageEmoji(ImmutableImage source,String context,int fontSize) throws IOException {
         if(context == null){
             context = "";
         }
-        ImmutableImage source = ImmutableImage.fromAwt(avatar);
         BufferedImage image = buildEmoji(source.scaleToWidth(300).toNewBufferedImage(BufferedImage.TYPE_INT_RGB), context,Color.BLACK,Color.WHITE,fontSize);
-        ImmutableImage immutableImage = ImmutableImage.fromAwt(image);
-        ImmutableImage filter = immutableImage.filter(new GrayscaleFilter());
-        return filter.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+        ImmutableImage immutableImage = ImmutableImage.fromAwt(image).filter(new GrayscaleFilter());
+        return immutableImage;
     }
 
-    public static BufferedImage montageImages(List<BufferedImage> images){
+    public static ImmutableImage montageImages(List<BufferedImage> images){
         Optional<Integer> maxWidth = images.stream().max(Comparator.comparingInt(BufferedImage::getWidth)).map(BufferedImage::getWidth);
         ImmutableImage source = montageImages(images,maxWidth.orElse(0));
-        return source.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+        return source;
     }
 
-    public static BufferedImage imageImageEmoji(BufferedImage avatar,String context,int fontSize) throws IOException {
+    public static ImmutableImage imageImageEmoji(ImmutableImage source,String context,int fontSize) throws IOException {
         if(context == null){
             context = "";
         }
-        ImmutableImage source = ImmutableImage.fromAwt(avatar);
         BufferedImage image = buildEmoji(source.toNewBufferedImage(BufferedImage.TYPE_INT_RGB), context,Color.BLACK,Color.WHITE,fontSize);
-        ImmutableImage immutableImage = ImmutableImage.fromAwt(image);
-        ImmutableImage filter = immutableImage.filter(new GrayscaleFilter());
-        return filter.toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+        ImmutableImage immutableImage = ImmutableImage.fromAwt(image).filter(new GrayscaleFilter());
+        return immutableImage;
     }
 
 

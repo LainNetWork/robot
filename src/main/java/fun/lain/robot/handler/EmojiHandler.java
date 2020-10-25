@@ -1,5 +1,6 @@
 package fun.lain.robot.handler;
 
+import com.sksamuel.scrimage.ImmutableImage;
 import fun.lain.robot.cache.ImageCache;
 import fun.lain.robot.utils.BeanUtils;
 import fun.lain.robot.utils.EmojiUtils;
@@ -13,6 +14,8 @@ import net.mamoe.mirai.message.data.SingleMessage;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +49,8 @@ public class EmojiHandler implements MessageHandler {
         Contact contact = messageEvent.getSubject();
         int index = msg.indexOf(".jpg");
         String content = msg.substring(0, index);
-        Image image = contact.uploadImage(EmojiUtils.createEmoji(content,24));
+        ImmutableImage immutableImage = ImmutableImage.fromAwt(EmojiUtils.createEmoji(content, 24));
+        Image image = contact.uploadImage(immutableImage.padBottom(15, Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
 
         MessageReceipt<Contact> contactMessageReceipt = contact.sendMessage(image);
         int id = contactMessageReceipt.getSource().getId();

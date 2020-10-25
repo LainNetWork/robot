@@ -74,7 +74,7 @@ public class XinJieHandler implements  MessageHandler{
                 break;
             }
             case "sub":{
-                subject.sendMessage("↓重置成功啦！请通过Base64解码获取最新订阅↓");
+                subject.sendMessage("↓请通过Base64解码获取最新订阅↓");
                 subject.sendMessage(getSubInfo(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER));
                 subject.sendMessage("👆Base64在线解密https://base64.us/");
                 break;
