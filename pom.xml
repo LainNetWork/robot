@@ -88,13 +88,13 @@
         <dependency>
             <groupId>com.sksamuel.scrimage</groupId>
             <artifactId>scrimage-filters</artifactId>
-            <version>4.0.5</version>
+            <version>4.0.9</version>
         </dependency>
 
         <dependency>
             <groupId>com.sksamuel.scrimage</groupId>
             <artifactId>scrimage-core</artifactId>
-            <version>4.0.5</version>
+            <version>4.0.9</version>
         </dependency>
         <dependency>
             <groupId>com.github.zh79325</groupId>
