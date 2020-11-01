@@ -1,15 +1,12 @@
 package fun.lain.robot.web;
 
 import fun.lain.robot.service.RobotService;
-import fun.lain.robot.web.auth.NeedAuth;
 import fun.lain.robot.web.mo.QQMessageRes;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Friend;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.message.MessageReceipt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
@@ -26,7 +23,6 @@ public class MessagePushController {
     private final RobotService robotService;
 
     @PostMapping("/group/{groupId}")
-    @NeedAuth
     public HttpResult<Object> pushMessageToGroup(@PathVariable Long groupId, @RequestBody QQMessageRes qqMessageRep){
         Bot bot = robotService.getBot();
         Group group;
