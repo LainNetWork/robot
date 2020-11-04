@@ -1,7 +1,13 @@
 # robot
-一般通过Robot，基于SpringBoot和mirai-core开发
+一般通过Robot，基于SpringBoot和mirai-core开发，需要JDK11以上的运行环境
 
-误打误撞开发的自娱自乐整活QQ机器人，因此有许多定制化功能,包括但不限于基金净值估算抓取，生草表情包制作，日语大辞典，色图随机器，可以当作是Mirai的用法入门教学。
+一时兴起开发的自娱自乐整活QQ机器人，因此有许多定制化功能,包括但不限于基金净值估算抓取，生草表情包制作，日语大辞典，色图随机器，可以当作是Mirai的用法入门教学。
+
+快速启动可以下载RELEASE包，然后执行以下命令：
+
+  java -jar robot.jar --spring.config.location=全量配置文件路径
+
+配置文件可参考[这里](https://github.com/LainNetWork/robot/blob/master/src/main/resources/application.yml)
 
 如果真的有人会使用本项目的代码，保留来源声明即可。
 
