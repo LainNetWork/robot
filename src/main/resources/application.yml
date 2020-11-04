@@ -1,4 +1,10 @@
 spring:
+  application:
+    name: lain-robot
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
   profiles:
     active: dev
   cache:
