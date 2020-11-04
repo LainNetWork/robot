@@ -10,9 +10,9 @@
     </parent>
     <groupId>fun.lain</groupId>
     <artifactId>robot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0.0.RELEASE</version>
     <name>robot</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Lain Robot</description>
 
     <properties>
         <java.version>11</java.version>
