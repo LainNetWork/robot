@@ -2,9 +2,11 @@ spring:
   application:
     name: lain-robot
   cloud:
+    ## 个人使用的配置，可以移除
     consul:
       host: localhost
       port: 8500
+      enabled: false
   profiles:
     active: dev
   cache:
@@ -12,6 +14,7 @@ spring:
     caffeine:
       spec: maximumSize=500,expireAfterWrite=86000s
 
+## account: bot账号  password: bot密码 masterAccount: 所有者账号，用于限定一些管理员功能
 bot:
   account:
   password:
@@ -21,16 +24,19 @@ logging:
   file:
     path: ./log
 
+## 个人博客联动接口 ，需要配合博客程序Halo使用
 blog:
-  uploadUrl:
+  uploadUrl: #
   loginUrl:
   username:
   password:
 
+# 色图接口，需要向 https://api.lolicon.app/#/ 免费申请api key
 acg:
   imageApiUrl: https://api.lolicon.app/setu/?apikey={apikey}&keyword={keyword}&r18={r18}&size1200={size1200}
   imageApiKey:
 
+# 个人使用的机场，心阶云，详细功能参考代码
 xinjie:
   masterId:
   email:
@@ -38,6 +44,7 @@ xinjie:
   password:
   baseURL: http://www.xinjiecloud.vip
 
+# 百度翻译，需要在官网免费申请接口
 translate:
   baidu:
     appID:

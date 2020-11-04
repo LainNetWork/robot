@@ -93,12 +93,7 @@ public class AcgRandomPicHandler implements MessageHandler {
 
     @Override
     public boolean isMatch(MessageEvent messageEvent) {
-        Optional<SingleMessage> firstText = messageEvent.getMessage().stream().filter(e -> e instanceof PlainText).findFirst();
-        if(firstText.isEmpty()){
-            return false;
-        }
-        SingleMessage singleMessage = firstText.get();
-        String msg = singleMessage.contentToString();
+        String msg = getFirstPlainTextMsg(messageEvent);
         return !StringUtils.isEmpty(msg) && msg.startsWith("st ");
     }
 }
