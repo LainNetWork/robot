@@ -26,6 +26,7 @@ import java.util.Optional;
 @Component
 @AllArgsConstructor
 public class EmojiHandler implements MessageHandler {
+    private static final String SUFFIX = ".jpg";
     private final ImageCache imageCache;
     @Override
     public int order() {
@@ -47,8 +48,7 @@ public class EmojiHandler implements MessageHandler {
 
         String msg = getFirstPlainTextMsg(messageEvent);
         Contact contact = messageEvent.getSubject();
-        int index = msg.indexOf(".jpg");
-        String content = msg.substring(0, index);
+        String content = msg.substring(0,msg.length() - SUFFIX.length());
         ImmutableImage immutableImage = ImmutableImage.fromAwt(EmojiUtils.createEmoji(content, 24));
         Image image = contact.uploadImage(immutableImage.padBottom(15, Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
 
