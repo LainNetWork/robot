@@ -2,6 +2,9 @@ package fun.lain.robot.utils;
 
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.filter.GrayscaleFilter;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -29,12 +32,13 @@ public class EmojiUtils {
     }
 
     public static BufferedImage buildEmoji(BufferedImage image,String context,Color background,Color fontColor,int fontSize){
+        if(StringUtils.isEmpty(context)){
+            return image;
+        }
         Font font = autoSuitFont(MS_FONT.deriveFont(Font.BOLD, fontSize),image.getWidth(),context);
         Graphics2D graphics = image.createGraphics();
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
-        TextLayout textLayout = new TextLayout(context,font,graphics.getFontRenderContext());
-        int lineSpace = 5;
-        int height = (int) textLayout.getBounds().getHeight() + lineSpace;
+        int height = fontMetrics.getMaxAscent();
         List<String> lines = new ArrayList<>();
         StringBuilder temp = new StringBuilder();
         for (char c : context.toCharArray()) {
@@ -49,9 +53,9 @@ public class EmojiUtils {
         }
         lines.add(temp.toString());
         //扩容图片长度
-        int newHeight = image.getHeight() + lines.size() * height;
+        int newHeight = image.getHeight() + lines.size() * height + 5;
         BufferedImage resizedImage = new BufferedImage(image.getWidth(),newHeight,BufferedImage.TYPE_INT_RGB);
-        Graphics resizedGraphics = resizedImage.getGraphics();
+        Graphics2D resizedGraphics = resizedImage.createGraphics();
         resizedGraphics.setFont(font);
         resizedGraphics.setColor(background);
         resizedGraphics.fillRect(0,0,resizedImage.getWidth(),newHeight);
@@ -61,15 +65,22 @@ public class EmojiUtils {
             if(i == lines.size() -1){
                 int width = fontMetrics.stringWidth(temp.toString());
                 int i1 = (resizedImage.getWidth() - width) / 2;
-                resizedGraphics.drawString(temp.toString(),i1,image.getHeight() +  (i + 1) * height - lineSpace);
+                TextLayout textLayout = new TextLayout(temp.toString(),font,resizedGraphics.getFontRenderContext());
+                textLayout.draw(resizedGraphics,i1,image.getHeight() +  (i + 1) * height);
+//                resizedGraphics.drawString(temp.toString(),i1,image.getHeight() +  (i + 1) * height);
             }else {
-                resizedGraphics.drawString(lines.get(i),0,image.getHeight() + (i + 1) * height - lineSpace);
+
+                TextLayout textLayout = new TextLayout(lines.get(i),font,resizedGraphics.getFontRenderContext());
+                textLayout.draw(resizedGraphics,0,image.getHeight() + (i + 1) * height);
             }
         }
         return resizedImage;
     }
 
     private static Font autoSuitFont(Font sourceFont,int imageWidth,String context){
+        if(StringUtils.isEmpty(context)){
+            return sourceFont;
+        }
         int size = sourceFont.getSize();
         if(size * context.length() <= imageWidth){
             return sourceFont.deriveFont((float)((imageWidth*3/4) / context.length()));//文字较少的时候，占画面3/4
@@ -79,8 +90,10 @@ public class EmojiUtils {
     }
 
     public static BufferedImage createEmoji(String context,int fontSize) throws IOException {
-        int i2 = new Random().nextInt(6);
-        BufferedImage image = ImageIO.read(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("emo/emo" + i2 +".jpg")));
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resolver.getResources("/emo/*.jpg");
+        int i2 = new Random().nextInt(resources.length);
+        BufferedImage image = ImageIO.read(resources[i2].getInputStream());
         return buildEmoji(image,context,Color.WHITE,Color.BLACK,fontSize);
     }
 
