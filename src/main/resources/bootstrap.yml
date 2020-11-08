@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      name: robot
+      label: main
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: configserver

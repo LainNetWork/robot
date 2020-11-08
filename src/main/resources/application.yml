@@ -1,6 +1,6 @@
 spring:
   application:
-    name: lain-robot
+    name: robot
   cloud:
     ## 个人使用的配置，可以移除
     consul:
