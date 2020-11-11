@@ -6,7 +6,7 @@ spring:
   cloud:
     config:
       name: robot
-      label: main
+      label: master
       profile: prod
       discovery:
         enabled: true
