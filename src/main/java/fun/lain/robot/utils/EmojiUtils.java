@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class EmojiUtils {
         Font temp = null;
         try {
 //            fonts = Font.createFonts(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
-            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+//            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Resource resources = resolver.getResource("/font/msyh.ttc");
+            InputStream inputStream = resources.getInputStream();
+            temp = Font.createFont(Font.TRUETYPE_FONT,inputStream);
         } catch (Exception e) {
             log.error("加载字体异常！",e);
         }
