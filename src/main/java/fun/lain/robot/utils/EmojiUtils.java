@@ -32,6 +32,7 @@ public class EmojiUtils {
 //            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
             Resource resources = resolver.getResource("/font/msyh.ttc");
+            log.info("load font:{}",resources.getFilename());
             InputStream inputStream = resources.getInputStream();
             temp = Font.createFont(Font.TRUETYPE_FONT,inputStream);
         } catch (Exception e) {
