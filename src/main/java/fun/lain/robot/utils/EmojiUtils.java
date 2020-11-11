@@ -25,13 +25,14 @@ import java.util.List;
 public class EmojiUtils {
     private static final  Font MS_FONT;
     static {
-        Font[] fonts = new Font[0];
+        Font temp = null;
         try {
-            fonts = Font.createFonts(Objects.requireNonNull(RobotApplication.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+//            fonts = Font.createFonts(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
         } catch (Exception e) {
             log.error("加载字体异常！",e);
         }
-        MS_FONT = fonts[0];
+        MS_FONT = temp;
     }
 
     public static BufferedImage buildEmoji(BufferedImage image,String context,Color background,Color fontColor,int fontSize){
