@@ -4,7 +4,7 @@ spring:
   cloud:
     ## 个人使用的配置，可以移除
     consul:
-      host: localhost
+      host: consul
       port: 8500
       enabled: false
   profiles:
