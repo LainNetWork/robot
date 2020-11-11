@@ -3,6 +3,7 @@ package fun.lain.robot.utils;
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.filter.GrayscaleFilter;
 import fun.lain.robot.RobotApplication;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author Lain
  * @date 2020/9/29 9:43
  */
+@Slf4j
 public class EmojiUtils {
     private static final  Font MS_FONT;
     static {
@@ -27,7 +29,7 @@ public class EmojiUtils {
         try {
             fonts = Font.createFonts(Objects.requireNonNull(RobotApplication.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("加载字体异常！",e);
         }
         MS_FONT = fonts[0];
     }
