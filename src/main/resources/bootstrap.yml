@@ -3,7 +3,7 @@ spring:
     config:
       name: robot
       label: main
-      profile: dev
+      profile: prod
       discovery:
         enabled: true
         service-id: configserver
