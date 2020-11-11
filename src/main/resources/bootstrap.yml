@@ -14,7 +14,6 @@ spring:
     consul:
       host: consul
       port: 8500
-      enabled: false
   profiles:
     active: dev
   cache:
