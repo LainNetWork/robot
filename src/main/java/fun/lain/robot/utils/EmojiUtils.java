@@ -28,7 +28,9 @@ public class EmojiUtils {
         Font temp = null;
         try {
 //            fonts = Font.createFonts(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
-            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+//            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+              temp = Font.getFont("黑体");
+
         } catch (Exception e) {
             log.error("加载字体异常！",e);
         }
