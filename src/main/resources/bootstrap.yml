@@ -1,4 +1,8 @@
+server:
+  port: 8989
 spring:
+  application:
+    name: robot
   cloud:
     config:
       name: robot
@@ -7,3 +11,13 @@ spring:
       discovery:
         enabled: true
         service-id: configserver
+    consul:
+      host: consul
+      port: 8500
+      enabled: false
+  profiles:
+    active: dev
+  cache:
+    cache-names: imageIdCache,authCache
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=86000s

@@ -1,21 +1,3 @@
-server:
-  port: 8989
-spring:
-  application:
-    name: robot
-  cloud:
-    ## 个人使用的配置，可以移除
-    consul:
-      host: consul
-      port: 8500
-      enabled: false
-  profiles:
-    active: dev
-  cache:
-    cache-names: imageIdCache,authCache
-    caffeine:
-      spec: maximumSize=500,expireAfterWrite=86000s
-
 ## account: bot账号  password: bot密码 masterAccount: 所有者账号，用于限定一些管理员功能
 bot:
   account:
