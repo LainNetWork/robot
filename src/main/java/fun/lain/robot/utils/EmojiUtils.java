@@ -2,6 +2,7 @@ package fun.lain.robot.utils;
 
 import com.sksamuel.scrimage.ImmutableImage;
 import com.sksamuel.scrimage.filter.GrayscaleFilter;
+import fun.lain.robot.RobotApplication;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -24,7 +25,7 @@ public class EmojiUtils {
     static {
         Font[] fonts = new Font[0];
         try {
-            fonts = Font.createFonts(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
+            fonts = Font.createFonts(Objects.requireNonNull(RobotApplication.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
         } catch (Exception e) {
             e.printStackTrace();
         }
