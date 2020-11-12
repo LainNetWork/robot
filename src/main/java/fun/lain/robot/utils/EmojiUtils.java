@@ -45,7 +45,7 @@ public class EmojiUtils {
         if(StringUtils.isEmpty(context)){
             return image;
         }
-        Font font = autoSuitFont(MS_FONT.deriveFont(Font.BOLD, fontSize),image.getWidth(),context);
+        Font font = autoSuitFont(MS_FONT.deriveFont((float)fontSize),image.getWidth(),context);
         Graphics2D graphics = image.createGraphics();
         FontMetrics fontMetrics = graphics.getFontMetrics(font);
         int height = fontMetrics.getMaxAscent();
