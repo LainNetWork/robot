@@ -31,7 +31,7 @@ public class EmojiUtils {
 //            fonts = Font.createFonts(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
 //            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource resources = resolver.getResource("/font/SourceHanSansJP-Regular.otf");
+            Resource resources = resolver.getResource("/font/Alibaba-PuHuiTi-Regular.ttf");
             log.info("load font:{}",resources.getFilename());
             InputStream inputStream = resources.getInputStream();
             temp = Font.createFont(Font.PLAIN,inputStream);
