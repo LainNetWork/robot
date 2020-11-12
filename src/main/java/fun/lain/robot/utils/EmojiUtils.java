@@ -31,10 +31,10 @@ public class EmojiUtils {
 //            fonts = Font.createFonts(Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
 //            temp = Font.createFont(Font.TRUETYPE_FONT,Objects.requireNonNull(EmojiUtils.class.getClassLoader().getResourceAsStream("font/msyh.ttc")));
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource resources = resolver.getResource("/font/tamako.ttf");
+            Resource resources = resolver.getResource("/font/SourceHanSansJP-Regular.otf");
             log.info("load font:{}",resources.getFilename());
             InputStream inputStream = resources.getInputStream();
-            temp = Font.createFont(Font.TRUETYPE_FONT,inputStream);
+            temp = Font.createFont(Font.PLAIN,inputStream);
         } catch (Exception e) {
             log.error("加载字体异常！",e);
         }
