@@ -49,7 +49,7 @@ public class EmojiHandler implements MessageHandler {
         String msg = getFirstPlainTextMsg(messageEvent);
         Contact contact = messageEvent.getSubject();
         String content = msg.substring(0,msg.length() - SUFFIX.length());
-        ImmutableImage immutableImage = ImmutableImage.fromAwt(EmojiUtils.createEmoji(content, 24));
+        ImmutableImage immutableImage = ImmutableImage.fromAwt(EmojiUtils.createEmoji(content, 30));
         Image image = contact.uploadImage(immutableImage.padBottom(15, Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
 
         MessageReceipt<Contact> contactMessageReceipt = contact.sendMessage(image);
