@@ -1,4 +1,4 @@
 FROM openjdk:11.0.9-jdk
-CMD ["cp","/usr/share/zoneinfo/Asia","/etc/localtime"]
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 COPY target/*.jar /app/robot.jar
 ENTRYPOINT ["java","-jar","/app/robot.jar","--spring.profiles.active=prod"]
