@@ -6,9 +6,11 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.MessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.Image;
+import org.apache.commons.lang.math.NumberUtils;
 import org.checkerframework.checker.units.qual.Prefix;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
@@ -22,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TianTianJJHandler implements MessageHandler {
     private static final String PREDICT_REALTIME = "http://j4.dfcfw.com/charts/pic6/%s.png";
-    private static final String PREFIX = "tt ";
+    private static final String PREFIX = "kkp ";
 
     private final ImageCache imageCache;
 
@@ -46,9 +48,8 @@ public class TianTianJJHandler implements MessageHandler {
         Contact subject = contact.getSubject();
         String firstMsg = getFirstPlainTextMsg(contact);
         String command = firstMsg.substring(PREFIX.length());
-        if(command.startsWith("predict ")){
-            String code = command.substring("predict ".length()).trim();
-            String url = String.format(PREDICT_REALTIME,code);
+        if(NumberUtils.isNumber(command)){
+            String url = String.format(PREDICT_REALTIME, command);
             Image image = subject.uploadImage(new URL(url));
             MessageReceipt<Contact> contactMessageReceipt = subject.sendMessage(image);
             int id = contactMessageReceipt.getSource().getId();
@@ -58,6 +59,6 @@ public class TianTianJJHandler implements MessageHandler {
 
     @Override
     public boolean isMatch(MessageEvent msg) {
-        return getFirstPlainTextMsg(msg).startsWith("tt ");
+        return getFirstPlainTextMsg(msg).startsWith(PREFIX);
     }
 }
