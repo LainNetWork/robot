@@ -33,3 +33,7 @@ translate:
   baidu:
     appID:
     secretKey:
+
+spring:
+  redis:
+    host:
