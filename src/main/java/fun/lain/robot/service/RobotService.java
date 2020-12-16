@@ -36,6 +36,7 @@ public class RobotService {
             {
                 //保存设备信息到文件
                 fileBasedDeviceInfo("deviceInfo.json");
+                setProtocol(MiraiProtocol.ANDROID_PHONE);
                 // setLoginSolver();
                 // setBotLoggerSupplier();
             }
