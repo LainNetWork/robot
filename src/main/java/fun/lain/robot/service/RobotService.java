@@ -1,16 +1,12 @@
 package fun.lain.robot.service;
 
 import fun.lain.robot.config.properties.RobotProperties;
-import fun.lain.robot.listener.MsgDispatcherListener;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.BotFactoryJvm;
-import net.mamoe.mirai.event.Events;
+import net.mamoe.mirai.BotFactory;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.utils.BotConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -19,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 public class RobotService {
-    private MsgDispatcherListener msgDispatcherListener;
+    private HandlerService handlerService;
     private RobotProperties robotProperties;
     private Bot bot;
 
@@ -32,16 +28,18 @@ public class RobotService {
     }
 
     public void init(){
-        Bot bot = BotFactoryJvm.newBot(robotProperties.getAccount(), robotProperties.getPassword(), new BotConfiguration() {
+        Bot bot = BotFactory.INSTANCE.newBot(robotProperties.getAccount(), robotProperties.getPassword(), new BotConfiguration() {
             {
                 //保存设备信息到文件
-                fileBasedDeviceInfo("deviceInfo.json");
+                fileBasedDeviceInfo("device.json");
                 setProtocol(MiraiProtocol.ANDROID_PHONE);
                 // setLoginSolver();
                 // setBotLoggerSupplier();
             }
         });
-        Events.registerEvents(bot, msgDispatcherListener);
+        bot.getEventChannel().subscribeAlways(MessageEvent.class, e->{
+            handlerService.dispatchMsg(e);
+        });
         this.bot = bot;
     }
 }

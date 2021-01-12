@@ -10,8 +10,9 @@ import fun.lain.robot.utils.BeanUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.message.GroupMessageEvent;
-import net.mamoe.mirai.message.MessageEvent;
+
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.*;
 import org.springframework.cache.CacheManager;
 import org.springframework.core.io.ByteArrayResource;
@@ -65,16 +66,16 @@ public class SavePicHandler implements MessageHandler {
             QuoteReply quoteReply = (QuoteReply)e;
             //从缓存中取数据
             ImageCache imageCache = BeanUtils.getBean(ImageCache.class);
-            List<String> imageIds = imageCache.get(subject.getId() + "_" + quoteReply.getSource().getId());
-            log.info("获取缓存 key: {}", subject.getId() + "_" + quoteReply.getSource().getId());
+            List<String> imageIds = imageCache.get(subject.getId() + "_" + quoteReply.getSource().getTime());
+            log.info("获取缓存 key: {}", subject.getId() + "_" + quoteReply.getSource().getTime());
             if(CollectionUtils.isEmpty(imageIds)){
                 subject.sendMessage("私密马神，没有缓存到该消息中的图片哦");
                 return;
             }
             for (String imageId : imageIds) {
-                Image offlineImage = MessageUtils.newImage(imageId);
+                Image offlineImage = Image.fromId(imageId);
                 if(contact instanceof GroupMessageEvent){
-                    String s = contact.getBot().queryImageUrl(offlineImage);
+                    String s = Image.queryUrl(offlineImage);
                     log.info("qq url:{}",s);
                     ResponseEntity<byte[]> image = restTemplate.getForEntity(s, byte[].class);
                     if(image.getBody() == null){
@@ -120,7 +121,7 @@ public class SavePicHandler implements MessageHandler {
             }
             OfflineMessageSource source = (OfflineMessageSource) quoteReply.getSource();
             source.getOriginalMessage().stream().filter(e1 ->e1 instanceof Image).forEach(image->{
-                subject.sendMessage(contact.getBot().queryImageUrl((Image)image));
+                subject.sendMessage(Image.queryUrl((Image)image));
             });
         });
     }

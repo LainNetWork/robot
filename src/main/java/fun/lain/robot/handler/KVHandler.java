@@ -1,7 +1,7 @@
 package fun.lain.robot.handler;
 
-import net.mamoe.mirai.message.MessageEvent;
 
+import net.mamoe.mirai.event.events.MessageEvent;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class KVHandler implements MessageHandler{
     public void handleMsg(MessageEvent contact) throws Exception {
         String content = contact.getMessage().contentToString();
         if(content.startsWith(CMD_SET)){
-            String subContent = content.substring(CMD_SET.length());//命令之外的内容
+            String subContent = content.substring(CMD_SET.length());//命令之外的内容ca
             int index = subContent.indexOf(" ");//key值
             if(index > 0){ //存在
                 String key = subContent.substring(0,index);

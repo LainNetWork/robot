@@ -3,14 +3,13 @@ package fun.lain.robot.handler;
 import fun.lain.robot.cache.ImageCache;
 import lombok.AllArgsConstructor;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.utils.ExternalResource;
 import org.apache.commons.lang.math.NumberUtils;
-import org.checkerframework.checker.units.qual.Prefix;
-import org.jsoup.Jsoup;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
@@ -25,6 +24,7 @@ import java.util.List;
 public class TianTianJJHandler implements MessageHandler {
     private static final String PREDICT_REALTIME = "http://j4.dfcfw.com/charts/pic6/%s.png";
     private static final String PREFIX = "kkp ";
+    private static RestTemplate restTemplate;
 
     private final ImageCache imageCache;
 
@@ -50,10 +50,15 @@ public class TianTianJJHandler implements MessageHandler {
         String command = firstMsg.substring(PREFIX.length());
         if(NumberUtils.isNumber(command)){
             String url = String.format(PREDICT_REALTIME, command);
-            Image image = subject.uploadImage(new URL(url));
-            MessageReceipt<Contact> contactMessageReceipt = subject.sendMessage(image);
-            int id = contactMessageReceipt.getSource().getId();
-            imageCache.put(subject.getId() + "_" + id, List.of(image.getImageId()));
+            ResponseEntity<byte[]> image = restTemplate.getForEntity(url, byte[].class);
+            if(image.getBody() == null){
+                subject.sendMessage("下载图片失败惹！");
+                return;
+            }
+            Image uploadImage = subject.uploadImage(ExternalResource.create(image.getBody()));
+            MessageReceipt messageReceipt = subject.sendMessage(uploadImage);
+            int id = messageReceipt.getSource().getTime();
+            imageCache.put(subject.getId() + "_" + id, List.of(uploadImage.getImageId()));
         }
     }
 

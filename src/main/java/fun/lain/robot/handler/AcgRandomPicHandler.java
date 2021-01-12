@@ -1,18 +1,18 @@
 package fun.lain.robot.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import fun.lain.robot.cache.ImageCache;
 import fun.lain.robot.config.properties.AcgProperties;
 import fun.lain.robot.utils.BeanUtils;
 import lombok.AllArgsConstructor;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageSource;
 import net.mamoe.mirai.message.data.PlainText;
-import net.mamoe.mirai.message.data.SingleMessage;
+import net.mamoe.mirai.utils.ExternalResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -74,17 +74,22 @@ public class AcgRandomPicHandler implements MessageHandler {
             String url = data.getString("url");
             String title = data.getString("title");
             boolean isR18 = data.getBoolean("r18");
-            Image image = contact.uploadImage(new URL(url));
+            ResponseEntity<byte[]> imageBytes = restTemplate.getForEntity(url, byte[].class);
+            if(imageBytes.getBody() == null){
+                contact.sendMessage("请求失败了喵~");
+            }
+            Image image = contact.uploadImage(ExternalResource.create(imageBytes.getBody()));
             MessageChain text = new PlainText(title).plus(image);
             if(isR18){
                 text = text.plus("由于包含不太纯洁的内容，8秒后自动撤回");
             }
-            MessageReceipt<Contact> contactMessageReceipt = contact.sendMessage(text);
-            String key = event.getSubject().getId() + "_" + contactMessageReceipt.getSource().getId();
+            MessageReceipt contactMessageReceipt = contact.sendMessage(text);
+            String key = event.getSubject().getId() + "_" + contactMessageReceipt.getSource().getTime();
             ImageCache imageCache = BeanUtils.getBean(ImageCache.class);
             imageCache.put(key,List.of(image.getImageId()));
             if(isR18){
-                contactMessageReceipt.recallIn(8000);
+                Thread.sleep(8000);
+                MessageSource.recall(contactMessageReceipt.getSource());
             }
         }else{
             contact.sendMessage("请求st异常:"+ body.getString("msg"));

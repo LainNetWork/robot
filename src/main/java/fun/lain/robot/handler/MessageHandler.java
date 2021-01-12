@@ -2,7 +2,8 @@ package fun.lain.robot.handler;
 
 import fun.lain.robot.service.RobotService;
 import fun.lain.robot.utils.BeanUtils;
-import net.mamoe.mirai.message.MessageEvent;
+
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.message.data.SingleMessage;

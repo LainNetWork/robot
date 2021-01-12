@@ -2,7 +2,7 @@ package fun.lain.robot.service;
 
 import fun.lain.robot.handler.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.concurrent.ConcurrentHashMap;
 

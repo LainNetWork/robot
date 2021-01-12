@@ -4,20 +4,21 @@ import com.sksamuel.scrimage.ImmutableImage;
 import fun.lain.robot.cache.ImageCache;
 import fun.lain.robot.utils.BeanUtils;
 import fun.lain.robot.utils.EmojiUtils;
+import fun.lain.robot.utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.Image;
-import net.mamoe.mirai.message.data.PlainText;
-import net.mamoe.mirai.message.data.SingleMessage;
+import net.mamoe.mirai.utils.ExternalResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -50,10 +51,10 @@ public class EmojiHandler implements MessageHandler {
         Contact contact = messageEvent.getSubject();
         String content = msg.substring(0,msg.length() - SUFFIX.length());
         ImmutableImage immutableImage = ImmutableImage.fromAwt(EmojiUtils.createEmoji(content, 30));
-        Image image = contact.uploadImage(immutableImage.padBottom(15, Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
-
-        MessageReceipt<Contact> contactMessageReceipt = contact.sendMessage(image);
-        int id = contactMessageReceipt.getSource().getId();
+        BufferedImage image1 = immutableImage.padBottom(15, Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+        Image image = contact.uploadImage(ExternalResource.create(ImageUtils.ImageToByte(image1)));
+        MessageReceipt contactMessageReceipt = contact.sendMessage(image);
+        int id = contactMessageReceipt.getSource().getTime();
         imageCache.put(messageEvent.getSubject().getId() + "_" + id, List.of(image.getImageId()));
     }
 

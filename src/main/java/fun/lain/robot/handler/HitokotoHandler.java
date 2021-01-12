@@ -3,14 +3,17 @@ package fun.lain.robot.handler;
 import com.sksamuel.scrimage.ImmutableImage;
 import fun.lain.robot.service.TranslateService;
 import fun.lain.robot.utils.EmojiUtils;
+import fun.lain.robot.utils.ImageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.Member;
-import net.mamoe.mirai.message.MessageEvent;
+
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.utils.ExternalResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -69,7 +72,8 @@ public class HitokotoHandler implements MessageHandler{
                 BufferedImage read = ImageIO.read(new ByteArrayInputStream(image.getBody()));
                 ImmutableImage cao = EmojiUtils.avatarImageEmoji(ImmutableImage.fromAwt(read), jp,24);
                 ImmutableImage result = EmojiUtils.avatarImageEmoji(cao, hitokoto,15);
-                Image image1 = subject.uploadImage(result.padBottom(15,Color.BLACK).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
+                BufferedImage image2 = result.padBottom(15, Color.BLACK).toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+                Image image1 = subject.uploadImage(ExternalResource.create(ImageUtils.ImageToByte(image2)));
                 subject.sendMessage(image1);
             }
         }else {
@@ -79,7 +83,7 @@ public class HitokotoHandler implements MessageHandler{
             String contentToString = content.map(SingleMessage::contentToString).orElse("");
             String jp = translateService.baiduTranslate(contentToString, "auto", "jp");
             for (Image image : collect) {
-                String imageUrl = contact.getBot().queryImageUrl(image);
+                String imageUrl = Image.queryUrl(image);
                 ResponseEntity<byte[]> imageData = restTemplate.getForEntity(imageUrl, byte[].class);
                 if(imageData.getBody() == null){
                     subject.sendMessage("获取图片失败惹，一定是服务器被网线所蒙蔽了！");
@@ -91,7 +95,8 @@ public class HitokotoHandler implements MessageHandler{
             ImmutableImage source = EmojiUtils.montageImages(result);
             ImmutableImage cao = EmojiUtils.imageImageEmoji(source, jp,24);
             ImmutableImage resultImage = EmojiUtils.imageImageEmoji(cao, contentToString,15);
-            Image image1 = subject.uploadImage(resultImage.padBottom(15, Color.BLACK).toNewBufferedImage(BufferedImage.TYPE_INT_RGB));
+            BufferedImage image = resultImage.padBottom(15, Color.BLACK).toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
+            Image image1 = subject.uploadImage(ExternalResource.create(ImageUtils.ImageToByte(image)));
             subject.sendMessage(image1);
         }
     }

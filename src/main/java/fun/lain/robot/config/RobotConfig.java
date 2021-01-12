@@ -2,7 +2,6 @@ package fun.lain.robot.config;
 
 import fun.lain.robot.config.properties.RobotProperties;
 import fun.lain.robot.handler.*;
-import fun.lain.robot.listener.MsgDispatcherListener;
 import fun.lain.robot.service.HandlerService;
 import fun.lain.robot.service.RobotService;
 
@@ -27,20 +26,18 @@ public class RobotConfig implements ApplicationContextAware {
     @Bean
     public RobotService robotService(RobotProperties robotProperties){
         RobotService robotService = new RobotService();
-        robotService.setMsgDispatcherListener(msgDispatcherListener());
+        robotService.setHandlerService(handlerService());
         robotService.setRobotProperties(robotProperties);
         robotService.init();
         return robotService;
     }
 
 
-    private MsgDispatcherListener msgDispatcherListener(){
-        MsgDispatcherListener msgDispatcherListener = new MsgDispatcherListener();
+    private HandlerService handlerService(){
         HandlerService handlerService = new HandlerService();
         Map<String, MessageHandler> beansOfType = applicationContext.getBeansOfType(MessageHandler.class);
         beansOfType.values().forEach(handlerService::add);
-        msgDispatcherListener.setHandlerService(handlerService);
-        return msgDispatcherListener;
+        return handlerService;
     }
 
     @Override

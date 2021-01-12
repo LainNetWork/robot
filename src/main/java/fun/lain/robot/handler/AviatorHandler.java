@@ -2,7 +2,7 @@ package fun.lain.robot.handler;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.message.data.SingleMessage;
 import org.springframework.stereotype.Component;

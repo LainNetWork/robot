@@ -3,7 +3,7 @@ package fun.lain.robot.handler;
 import fun.lain.robot.cache.ImageCache;
 import fun.lain.robot.utils.BeanUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.Image;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +36,7 @@ public class CacheImageHandler implements MessageHandler{
     public void handleMsg(MessageEvent contact) throws Exception {
         List<String> ids = contact.getMessage().stream()
                 .filter(e -> e instanceof Image).map(e -> ((Image) e).getImageId()).collect(Collectors.toList());
-        String key = contact.getSubject().getId()+"_" +contact.getSource().getId();
+        String key = contact.getSubject().getId()+"_" +contact.getSource().getTime();
         log.debug("缓存： key:{} ,value:{}",key,ids);
         ImageCache imageCache = BeanUtils.getBean(ImageCache.class);
         imageCache.put(key,ids);
