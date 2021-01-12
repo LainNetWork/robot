@@ -88,8 +88,7 @@ public class AcgRandomPicHandler implements MessageHandler {
             ImageCache imageCache = BeanUtils.getBean(ImageCache.class);
             imageCache.put(key,List.of(image.getImageId()));
             if(isR18){
-                Thread.sleep(8000);
-                MessageSource.recall(contactMessageReceipt.getSource());
+                contactMessageReceipt.recallIn(8000);
             }
         }else{
             contact.sendMessage("请求st异常:"+ body.getString("msg"));
