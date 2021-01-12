@@ -90,7 +90,6 @@ public class XinJieHandler implements  MessageHandler{
                 }
                 if(xinJieProperties.getUserId().contains(contact.getSender().getId())){
                     subject.sendMessage("↓请通过Base64解码获取最新订阅↓");
-                    subject.sendMessage("测试111111测试11111111测试1111111测试11111111111测试111111测试111111111111测试111111111测试1111测试1111111测试111111111测试");
                     subject.sendMessage(new PlainText(getSubInfo(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_USER)));
                     subject.sendMessage("👆Base64在线解密https://base64.us/");
                 }
