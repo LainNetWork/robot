@@ -24,7 +24,7 @@ import java.util.List;
 public class TianTianJJHandler implements MessageHandler {
     private static final String PREDICT_REALTIME = "http://j4.dfcfw.com/charts/pic6/%s.png";
     private static final String PREFIX = "kkp ";
-    private static RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private final ImageCache imageCache;
 
