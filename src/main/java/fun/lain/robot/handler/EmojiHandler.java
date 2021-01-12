@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -54,8 +55,8 @@ public class EmojiHandler implements MessageHandler {
         BufferedImage image1 = immutableImage.padBottom(15, Color.WHITE).toNewBufferedImage(BufferedImage.TYPE_INT_RGB);
         Image image = contact.uploadImage(ExternalResource.create(ImageUtils.ImageToByte(image1)));
         MessageReceipt contactMessageReceipt = contact.sendMessage(image);
-        int id = contactMessageReceipt.getSource().getTime();
-        imageCache.put(messageEvent.getSubject().getId() + "_" + id, List.of(image.getImageId()));
+        String key = contact.getId()+"_" + List.of(messageEvent.getSource().getIds()).stream().map(String::valueOf).collect(Collectors.joining(","));
+        imageCache.put(messageEvent.getSubject().getId() + "_" + key, List.of(image.getImageId()));
     }
 
     @Override

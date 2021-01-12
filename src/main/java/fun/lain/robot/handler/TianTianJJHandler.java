@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -57,8 +58,8 @@ public class TianTianJJHandler implements MessageHandler {
             }
             Image uploadImage = subject.uploadImage(ExternalResource.create(image.getBody()));
             MessageReceipt messageReceipt = subject.sendMessage(uploadImage);
-            int id = messageReceipt.getSource().getTime();
-            imageCache.put(subject.getId() + "_" + id, List.of(uploadImage.getImageId()));
+            String key = contact.getSubject().getId()+"_" + List.of(contact.getSource().getInternalIds()).stream().map(String::valueOf).collect(Collectors.joining(","));
+            imageCache.put(subject.getId() + "_" + key, List.of(uploadImage.getImageId()));
         }
     }
 

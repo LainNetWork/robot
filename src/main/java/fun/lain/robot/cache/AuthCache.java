@@ -7,12 +7,15 @@ import fun.lain.robot.constants.ApiConstants;
 import fun.lain.robot.utils.BeanUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.rmi.UnexpectedException;
 import java.util.HashMap;
 import java.util.List;
@@ -29,17 +32,16 @@ import java.util.Map;
 public class AuthCache {
     private final XinJieProperties xinJieProperties;
     private final BlogProperties blogProperties;
-    private final RestTemplate restTemplate;
 
-    @Cacheable(value = "authCache",key = "#p0")
-    public List<String> getXinjieCookies(String key){
+//    @Cacheable(value = "authCache",key = "#p0")
+    public Map<String,String> getXinjieCookies(String key) throws IOException {
         Map<String,String> param = new HashMap<>();
         param.put("email",xinJieProperties.getEmail());
         param.put("passwd",xinJieProperties.getPassword());
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_LOGIN, null, String.class, param);
-        List<String> strings = responseEntity.getHeaders().get(HttpHeaders.SET_COOKIE);
-        log.info("cookies:{}",responseEntity.getHeaders());
-        return strings;
+        Connection.Response execute = Jsoup.connect(xinJieProperties.getBaseURL() + ApiConstants.XIN_JIE_LOGIN).data(param).method(Connection.Method.POST).execute();
+        log.info("cookies:{}",execute.cookies());
+        return execute.cookies();
+
     }
     @Cacheable(value = "authCache",key = "#p0")
     public String getBlogToken(String key) throws UnexpectedException {

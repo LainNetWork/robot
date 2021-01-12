@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.rmi.UnexpectedException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author Lain <tianshang360@163.com>
@@ -66,7 +67,8 @@ public class SavePicHandler implements MessageHandler {
             QuoteReply quoteReply = (QuoteReply)e;
             //从缓存中取数据
             ImageCache imageCache = BeanUtils.getBean(ImageCache.class);
-            List<String> imageIds = imageCache.get(subject.getId() + "_" + quoteReply.getSource().getTime());
+            String key = contact.getSubject().getId()+"_" + List.of(contact.getSource().getInternalIds()).stream().map(String::valueOf).collect(Collectors.joining(","));
+            List<String> imageIds = imageCache.get(subject.getId() + "_" +key);
             log.info("获取缓存 key: {}", subject.getId() + "_" + quoteReply.getSource().getTime());
             if(CollectionUtils.isEmpty(imageIds)){
                 subject.sendMessage("私密马神，没有缓存到该消息中的图片哦");

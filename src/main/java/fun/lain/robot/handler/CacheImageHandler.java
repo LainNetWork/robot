@@ -36,7 +36,7 @@ public class CacheImageHandler implements MessageHandler{
     public void handleMsg(MessageEvent contact) throws Exception {
         List<String> ids = contact.getMessage().stream()
                 .filter(e -> e instanceof Image).map(e -> ((Image) e).getImageId()).collect(Collectors.toList());
-        String key = contact.getSubject().getId()+"_" +contact.getSource().getTime();
+        String key = contact.getSubject().getId()+"_" + List.of(contact.getSource().getInternalIds()).stream().map(String::valueOf).collect(Collectors.joining(","));
         log.debug("缓存： key:{} ,value:{}",key,ids);
         ImageCache imageCache = BeanUtils.getBean(ImageCache.class);
         imageCache.put(key,ids);
